@@ -1,0 +1,105 @@
+Robot_pill_re
+int LED1 = 2; // pin 2 on L293D IC
+int LED2 = 3; // pin 7 on L293D IC
+int LED3 = 4; // pin 2 on L293D IC
+int SW = 5;
+int BZ = 8;
+
+void setup() {
+  // put your setup code here, to run once:
+pinMode(LED1, OUTPUT);
+    pinMode(LED2, OUTPUT);
+     pinMode(LED3, OUTPUT);
+        pinMode(BZ, OUTPUT);
+     pinMode(SW, INPUT);
+     digitalWrite(BZ,HIGH);
+      Serial.begin(9600); // the GPRS baud rate
+
+    }
+
+void loop() {
+  // put your main code here, to run repeatedly:
+
+  
+digitalWrite(LED1,HIGH);
+digitalWrite(LED2,LOW);
+digitalWrite(LED3,LOW);
+digitalWrite(BZ,LOW);
+delay(500);
+digitalWrite(BZ,HIGH);
+delay(1000);
+digitalWrite(BZ,LOW);
+delay(500);
+digitalWrite(BZ,HIGH);
+delay(8000);
+int S1= digitalRead(SW);
+ Serial.println(S1);
+if(S1 == 1)
+{
+//digitalWrite(BZ,HIGH);
+digitalWrite(LED1,LOW);
+digitalWrite(LED2,LOW);
+digitalWrite(LED3,LOW);
+
+}
+
+E_delay();
+ Serial.println(S1);
+digitalWrite(LED2,HIGH);
+digitalWrite(LED1,LOW);
+digitalWrite(LED3,LOW);
+digitalWrite(BZ,LOW);
+delay(500);
+digitalWrite(BZ,HIGH);
+delay(1000);
+digitalWrite(BZ,LOW);
+delay(500);
+digitalWrite(BZ,HIGH);
+delay(8000);
+int S2= digitalRead(SW);
+ Serial.println(S2);
+if(S2 == 1)
+{
+//digitalWrite(BZ,HIGH);
+digitalWrite(LED1,LOW);
+digitalWrite(LED2,LOW);
+digitalWrite(LED3,LOW);
+
+}
+E_delay();
+ Serial.println(S2);
+digitalWrite(LED3,HIGH);
+digitalWrite(LED1,LOW);
+digitalWrite(LED2,LOW);
+digitalWrite(BZ,LOW);
+delay(500);
+digitalWrite(BZ,HIGH);
+delay(1000);
+digitalWrite(BZ,LOW);
+delay(500);
+digitalWrite(BZ,HIGH);
+delay(8000);
+int S3= digitalRead(SW);
+ Serial.println(S3);
+if(S3 == 1)
+{
+//digitalWrite(BZ,HIGH);
+digitalWrite(LED1,LOW);
+digitalWrite(LED2,LOW);
+digitalWrite(LED3,LOW);
+
+}
+E_delay();
+  Serial.println(S3);
+
+}
+
+void E_delay()
+{
+  delay(5000);
+delay(5000);
+delay(5000);
+delay(5000);
+delay(5000);
+delay(5000);
+}

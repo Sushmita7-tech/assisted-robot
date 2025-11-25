@@ -1,0 +1,209 @@
+
+#include <SoftwareSerial.h>
+SoftwareSerial gsmSerial(9, 8); //RX, TX
+
+String textMessage;
+String message, motorState;
+
+
+int motorPin1 = 2; // pin 2 on L293D IC
+int motorPin2 = 3; // pin 7 on L293D IC
+int motorPin3 = 10; // pin 2 on L293D IC
+int motorPin4 = 11; // pin 7 on L293D IC
+int enablePin = 5; // pin 1 on L293D IC
+int Arduino2_SW = 7;
+
+int Pill_Button = 4;
+
+int BZ = 12;
+int state;
+int flag=0;        //makes sure that the serial only prints once the state
+
+void setup() {
+  gsmSerial.begin(112500); 
+    // sets the pins as outputs:
+    pinMode(motorPin1, OUTPUT);
+    pinMode(motorPin2, OUTPUT);
+     pinMode(motorPin3, OUTPUT);
+    pinMode(motorPin4, OUTPUT);
+     pinMode(Arduino2_SW, OUTPUT);
+    pinMode(BZ, OUTPUT);
+    
+//PILL Warning LED
+    pinMode(A0, OUTPUT);
+    pinMode(A1, OUTPUT);
+    pinMode(A2, OUTPUT);
+    
+    pinMode(enablePin, OUTPUT);
+     pinMode(Pill_Button, INPUT);
+    // sets enablePin high so that motor can turn on:
+    digitalWrite(enablePin, HIGH);
+    // initialize serial communication at 9600 bits per second:
+   // Serial.begin(2400);
+
+    Serial.begin(9600); // the GPRS baud rate
+
+}
+
+void loop() {
+    //if some date is sent, reads it and saves in state
+ digitalWrite(BZ, HIGH);
+// digitalWrite(Arduino2_SW,LOW);
+    int S1 = digitalRead(Pill_Button);
+ 
+    if (S1 == 1)
+    {
+     // digitalWrite(BZ, LOW);
+     digitalWrite(Arduino2_SW,HIGH);
+     delay(1000);
+       SendMessage1();
+        
+            
+    }
+          if(Serial.available() > 0){     
+      state = Serial.read();   
+      flag=0;
+      // 
+    }  
+
+     
+    // To rotate motor in forward direction
+    if (state == '1') {
+        digitalWrite(motorPin1, HIGH); // set pin 2 on L293D low
+        digitalWrite(motorPin2, LOW); // set pin 7 on L293D low
+         digitalWrite(motorPin3, HIGH); // set pin 2 on L293D low
+        digitalWrite(motorPin4, LOW); // set pin 7 on L293D low
+        if(flag == 0){
+          Serial.println("Motor: off");
+          flag=1;
+        }
+    }
+    // To rotate motor in reverse direction
+    else if (state == '3') {
+        digitalWrite(motorPin1, LOW); // set pin 2 on L293D low
+        digitalWrite(motorPin2, HIGH); // set pin 7 on L293D high
+       
+        digitalWrite(motorPin3, LOW); // set pin 7 on L293D low
+          digitalWrite(motorPin4, HIGH); // set pin 2 on L293D low
+        if(flag == 0){
+          Serial.println("Motor: right");
+          flag=1;
+        }
+    }
+    // To rotate motor left side
+    else if (state == '4') {
+        digitalWrite(motorPin1, HIGH); // set pin 2 on L293D high
+        digitalWrite(motorPin2, LOW); // set pin 7 on L293D low
+
+        digitalWrite(motorPin3, LOW); // set pin 2 on L293D high
+        digitalWrite(motorPin4, LOW); // set pin 7 on L293D low
+        if(flag == 0){
+          Serial.println("Motor: left");
+          flag=1;
+        }
+    }
+
+    // To rotate motor right side
+    else if (state == '2') {
+        digitalWrite(motorPin1, LOW); // set pin 2 on L293D high
+        digitalWrite(motorPin2, LOW); // set pin 7 on L293D low
+
+        digitalWrite(motorPin3, HIGH); // set pin 2 on L293D high
+        digitalWrite(motorPin4, LOW); // set pin 7 on L293D low
+        if(flag == 0){
+          Serial.println("Motor: left");
+          flag=1;
+        }
+    }else if (state == '5') {
+   digitalWrite(motorPin1, LOW); // set pin 2 on L293D high
+        digitalWrite(motorPin2, LOW); // set pin 7 on L293D low
+
+        digitalWrite(motorPin3, LOW); // set pin 2 on L293D high
+        digitalWrite(motorPin4, LOW); // set pin 7 on L293D low
+              if(flag == 0){
+          Serial.println("Motor: left");
+          flag=1;
+        }
+    }
+     else if (state == '6') {
+    Serial.println("Received signal from Bluetooth");
+    digitalWrite(BZ, LOW);
+     delay(4000);
+    delay(500);
+        digitalWrite(BZ,HIGH);
+  
+        SendMessage();
+     
+             if(flag == 0){
+          Serial.println("Motor: left");
+          flag=1;
+        }
+    }
+
+ }
+
+void SendMessage()
+{
+   Serial.println("Setting the GSM in text mode");
+   gsmSerial.println("AT+CMGF=1\r");
+   delay(2000);
+   Serial.println("Sending SMS to the desired phone number!");
+   gsmSerial.println("AT+CMGS=\"9731816628\"\r");
+   // Replace x with mobile number
+   delay(2000);
+
+   gsmSerial.println("Patient is Serious");    // SMS Text
+   delay(200);
+   gsmSerial.println((char)26);               // ASCII code of CTRL+Z
+   delay(2000);
+   Serial.println("MSG Sent sucessfully!");
+delay(1000);
+   Serial.println("Setting the GSM in text mode");
+   gsmSerial.println("AT+CMGF=1\r");
+   delay(2000);
+   Serial.println("Sending SMS to the desired phone number!");
+   gsmSerial.println("AT+CMGS=\"9738443513\"\r");
+   // Replace x with mobile number
+   delay(2000);
+
+   gsmSerial.println("Patient is Serious");    // SMS Text
+   delay(200);
+   gsmSerial.println((char)26);               // ASCII code of CTRL+Z
+   delay(2000);
+   Serial.println("MSG Sent sucessfully!");
+}
+
+void SendMessage1()
+{
+  digitalWrite(Arduino2_SW,HIGH);
+  delay(500);
+   Serial.println("Setting the GSM in text mode");
+   gsmSerial.println("AT+CMGF=1\r");
+   delay(2000);
+   Serial.println("Sending SMS to the desired phone number!");
+   gsmSerial.println("AT+CMGS=\"9731816628\"\r");
+   // Replace x with mobile number
+   delay(2000);
+
+   gsmSerial.println("Pill Consumed");    // SMS Text
+   delay(200);
+   gsmSerial.println((char)26);               // ASCII code of CTRL+Z
+   delay(2000);
+   Serial.println("MSG Sent sucessfully!");
+delay(1000);
+   Serial.println("Setting the GSM in text mode");
+   gsmSerial.println("AT+CMGF=1\r");
+   delay(2000);
+   Serial.println("Sending SMS to the desired phone number!");
+   gsmSerial.println("AT+CMGS=\"9738443513\"\r");
+   // Replace x with mobile number
+   delay(2000);
+
+   gsmSerial.println("Pill Consumed");    // SMS Text
+   delay(200);
+   gsmSerial.println((char)26);               // ASCII code of CTRL+Z
+   delay(2000);
+   Serial.println("MSG Sent sucessfully!");
+   digitalWrite(Arduino2_SW,LOW);
+   delay(1000);
+}
